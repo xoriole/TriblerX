@@ -24,6 +24,7 @@ fi
 # ----- Install dependencies before the build
 python3 -m pip install --upgrade pip
 python3 -m pip install --upgrade -r requirements-build.txt
+python3 -m pip install --upgrade libnacl==1.8.0
 
 # ----- Update version
 python3 ./build/update_version.py -r .

@@ -7,6 +7,7 @@ set -e # exit when any command fails
 
 APPNAME=Tribler
 LOG_LEVEL=${LOG_LEVEL:-"DEBUG"}
+SIGN_MSG=${SIGN_MSG:-"Developer ID Application: Your Name (Team ID)"}
 
 if [ -e .TriblerVersion ]; then
     DMGNAME="Tribler-$(cat .TriblerVersion)"
@@ -22,13 +23,15 @@ export RESOURCES=build/mac/resources
 python3 -m venv build-env
 . ./build-env/bin/activate
 python3 -m pip install pip==23.0.1 # pin pip version to avoid "--no-use-pep517" issues with the latest version
-python3 -m pip install PyInstaller==4.2 --no-use-pep517
+#python3 -m pip install PyInstaller==4.2 --no-use-pep517
 python3 -m pip install --upgrade -r requirements-build.txt
 
 # ----- Build
 
-echo Building Tribler using PyInstaller
+#echo Building Tribler using PyInstaller
 pyinstaller tribler.spec --log-level="${LOG_LEVEL}"
+#echo Building Tribler using Cx_Freeze
+#python3 setup.py build
 
 mkdir -p dist/installdir
 mv dist/$APPNAME.app dist/installdir
@@ -47,6 +50,9 @@ ln -s /Applications dist/installdir/Applications
 touch dist/installdir
 
 mkdir -p dist/temp
+
+# sign app
+codesign --deep --force --verbose --sign "$SIGN_MSG" dist/installdir/$APPNAME.app
 
 # create image
 hdiutil create -fs HFS+ -srcfolder dist/installdir -format UDRW -scrub -volname ${APPNAME} dist/$APPNAME.dmg
@@ -104,6 +110,15 @@ mv dist/$APPNAME.dmg dist/temp/rw.dmg
 hdiutil convert dist/temp/rw.dmg -format UDZO -imagekey zlib-level=9 -o dist/$APPNAME.dmg
 rm -f dist/temp/rw.dmg
 
+# add EULA
+python3 ./build/mac/licenseDMG.py dist/$APPNAME.dmg LICENSE.txt
+
 if [ ! -z "$DMGNAME" ]; then
     mv dist/$APPNAME.dmg dist/$DMGNAME.dmg
 fi
+
+# sign the dmg and verify
+codesign --force --verify --verbose --sign "$SIGN_MSG" dist/$DMGNAME.dmg
+codesign --verify --verbose=4 dist/$DMGNAME.dmg
+spctl --assess --type open --context context:primary-signature -v dist/$DMGNAME.dmg
+
