@@ -22,15 +22,15 @@ export RESOURCES=build/mac/resources
 python3 -m venv build-env
 . ./build-env/bin/activate
 python3 -m pip install pip==23.0.1 # pin pip version to avoid "--no-use-pep517" issues with the latest version
-python3 -m pip install PyInstaller==4.2 --no-use-pep517
+#python3 -m pip install PyInstaller==4.2 --no-use-pep517
 python3 -m pip install --upgrade -r requirements-build.txt
 
 # ----- Build
 
 #echo Building Tribler using PyInstaller
-#pyinstaller tribler.spec --log-level="${LOG_LEVEL}"
-echo Building Tribler using Cx_Freeze
-python3 setup.py build
+pyinstaller tribler.spec --log-level="${LOG_LEVEL}"
+#echo Building Tribler using Cx_Freeze
+#python3 setup.py build
 
 mkdir -p dist/installdir
 mv dist/$APPNAME.app dist/installdir
