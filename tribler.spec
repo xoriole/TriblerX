@@ -97,8 +97,7 @@ hiddenimports += widget_files
 hiddenimports += pony_deps
 
 # Collect all submodules of tribler.core and tribler.gui
-hiddenimports += collect_submodules('tribler.core')
-hiddenimports += collect_submodules('tribler.gui')
+hiddenimports += collect_submodules('tribler.core.tunnel')
 
 # Fix for issue: Could not load a pixbuf from icon theme.
 # Unrecognized image file format (gdk-pixbuf-error-quark, 3).
