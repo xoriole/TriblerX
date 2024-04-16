@@ -7,6 +7,7 @@ set -e # exit when any command fails
 
 APPNAME=Tribler
 LOG_LEVEL=${LOG_LEVEL:-"DEBUG"}
+SIGN_MSG=${SIGN_MSG:-"Developer ID Application: Your Name (Team ID)"}
 
 if [ -e .TriblerVersion ]; then
     DMGNAME="Tribler-$(cat .TriblerVersion)"
@@ -50,8 +51,13 @@ touch dist/installdir
 
 mkdir -p dist/temp
 
+# sign app
+codesign --deep --force --verbose --sign "$SIGN_MSG" dist/installdir/$APPNAME.app
+
 # create image
 hdiutil create -fs HFS+ -srcfolder dist/installdir -format UDRW -scrub -volname ${APPNAME} dist/$APPNAME.dmg
+
+hdiutil create -volname "AppName" -srcfolder /path/to/YourApp.app -ov -format UDZO AppName.dmg
 
 # open it
 hdiutil attach -readwrite -noverify -noautoopen dist/$APPNAME.dmg -mountpoint dist/temp/mnt
@@ -112,3 +118,8 @@ python3 ./build/mac/licenseDMG.py dist/$APPNAME.dmg LICENSE.txt
 if [ ! -z "$DMGNAME" ]; then
     mv dist/$APPNAME.dmg dist/$DMGNAME.dmg
 fi
+
+codesign --force --verify --verbose --sign "$SIGN_MSG" dist/$DMGNAME.dmg
+codesign --verify --verbose=4 dist/$DMGNAME.dmg
+spctl --assess --type open --context context:primary-signature -v dist/$DMGNAME.dmg
+
