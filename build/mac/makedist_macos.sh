@@ -57,8 +57,6 @@ codesign --deep --force --verbose --sign "$SIGN_MSG" dist/installdir/$APPNAME.ap
 # create image
 hdiutil create -fs HFS+ -srcfolder dist/installdir -format UDRW -scrub -volname ${APPNAME} dist/$APPNAME.dmg
 
-hdiutil create -volname "AppName" -srcfolder /path/to/YourApp.app -ov -format UDZO AppName.dmg
-
 # open it
 hdiutil attach -readwrite -noverify -noautoopen dist/$APPNAME.dmg -mountpoint dist/temp/mnt
 
@@ -119,6 +117,7 @@ if [ ! -z "$DMGNAME" ]; then
     mv dist/$APPNAME.dmg dist/$DMGNAME.dmg
 fi
 
+# sign the dmg and verify
 codesign --force --verify --verbose --sign "$SIGN_MSG" dist/$DMGNAME.dmg
 codesign --verify --verbose=4 dist/$DMGNAME.dmg
 spctl --assess --type open --context context:primary-signature -v dist/$DMGNAME.dmg
