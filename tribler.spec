@@ -98,6 +98,10 @@ hiddenimports += pony_deps
 
 # Collect all submodules of tribler.core and tribler.gui
 hiddenimports += collect_submodules('tribler.core.tunnel')
+hiddenimports += collect_submodules('tribler.core.content_discovery')
+hiddenimports += collect_submodules('tribler.core.knowledge')
+hiddenimports += collect_submodules('tribler.core.rendezvous')
+hiddenimports += collect_submodules('ipv8.dht.discovery')
 
 # Fix for issue: Could not load a pixbuf from icon theme.
 # Unrecognized image file format (gdk-pixbuf-error-quark, 3).
