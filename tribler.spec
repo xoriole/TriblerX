@@ -95,6 +95,7 @@ hiddenimports = [
 ]
 hiddenimports += widget_files
 hiddenimports += pony_deps
+hiddenimports += ['tribler.core', 'tribler.gui']
 
 # Fix for issue: Could not load a pixbuf from icon theme.
 # Unrecognized image file format (gdk-pixbuf-error-quark, 3).
