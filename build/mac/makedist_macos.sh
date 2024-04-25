@@ -122,4 +122,12 @@ if [ -n "$CODE_SIGN_ENABLED" ] && [ -n "$APPLE_DEV_ID" ]; then
     codesign --force --verify --verbose --sign "$SIGN_MSG" dist/$DMGNAME.dmg
     codesign --verify --verbose=4 dist/$DMGNAME.dmg
     spctl --assess --type open --context context:primary-signature -v dist/$DMGNAME.dmg
+
+    # Assuming the keychain profile with the signing key is created and named as "tribler-codesign-profile".
+    # If not create the keychain profile with the following command:
+    # xcrun notarytool store-credentials "tribler-codesign-profile" --apple-id "<dev-id-email>" --team-id "<dev-id-team>"
+    KEYCHAIN_PROFILE=${KEYCHAIN_PROFILE:-"tribler-codesign-profile"}
+    # Submit the DMG for notarization and staple afterwards
+    xcrun notarytool submit dist/$DMGNAME.dmg --keychain-profile "$KEYCHAIN_PROFILE" --wait
+    xcrun stapler staple dist/$DMGNAME.dmg
 fi
