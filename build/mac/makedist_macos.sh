@@ -7,6 +7,7 @@ set -e # exit when any command fails
 
 APPNAME=Tribler
 LOG_LEVEL=${LOG_LEVEL:-"DEBUG"}
+BUILD_ENV=${BUILD_ENV:-"venv"}
 
 if [ -e .TriblerVersion ]; then
     DMGNAME="Tribler-$(cat .TriblerVersion)"
